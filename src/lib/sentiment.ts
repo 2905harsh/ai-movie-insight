@@ -92,11 +92,11 @@ Guidelines:
 
     // Validate the required fields exist
     if (!result.summary || !result.classification || !result.keyThemes || result.audienceScore === undefined) {
-      throw new Error("Incomplete sentiment data in Gemini response");
+      throw new Error("Incomplete sentiment data in Groq response");
     }
 
     return result;
   } catch {
-    throw new Error("Failed to parse sentiment analysis from Gemini. Please try again.");
+    throw new Error("Failed to parse sentiment analysis from Groq. Please try again.");
   }
 }
