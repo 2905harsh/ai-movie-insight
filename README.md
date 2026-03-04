@@ -1,13 +1,13 @@
 # CineInsight — AI Movie Insight Builder
 
-A full-stack Next.js application that takes an IMDb movie ID and returns rich movie details combined with AI-generated audience sentiment analysis powered by Claude.
+A full-stack Next.js application that takes an IMDb movie ID and returns rich movie details combined with AI-generated audience sentiment analysis powered by Groq AI (LLaMA 3.1).
 
 ---
 
 ## Features
 
 - **Movie Details** — Fetches title, poster, cast, release year, rating, runtime, genres, and plot from OMDB API
-- **AI Sentiment Analysis** — Uses Claude AI to generate an audience sentiment summary, overall classification (positive/mixed/negative), key themes, and audience score
+- **AI Sentiment Analysis** — Uses Groq AI (LLaMA 3.1) to generate an audience sentiment summary, overall classification (positive/mixed/negative), key themes, and audience score
 - **Beautiful UI** — Cinematic dark theme with smooth animations, responsive on all devices
 - **Input Validation** — Full client and server-side IMDb ID validation with clear error messages
 - **Loading States** — Progressive loading with skeleton screens per stage (movie fetch → sentiment analysis)
@@ -22,7 +22,7 @@ A full-stack Next.js application that takes an IMDb movie ID and returns rich mo
 | Language | TypeScript | Type safety across API boundaries reduces runtime bugs; better IDE support during development |
 | Styling | Tailwind CSS | Utility-first approach speeds up iteration; no CSS file switching; responsive design is declarative |
 | Movie Data | OMDB API | Free tier available; reliable REST API for IMDb data; returns structured JSON with poster, cast, ratings |
-| AI | Anthropic Claude API (`claude-sonnet-4-20250514`) | Reliable structured JSON output; nuanced understanding of film reception context |
+| AI | Groq API (LLaMA 3.1) | Completely free tier; no billing required; works globally; sub-second responses; OpenAI-compatible API |
 | Deployment | Vercel | Native Next.js support; free tier; environment variables handled securely; zero-config CI/CD from GitHub |
 
 ---
@@ -32,7 +32,7 @@ A full-stack Next.js application that takes an IMDb movie ID and returns rich mo
 ### Prerequisites
 - Node.js 18+
 - OMDB API key (free at [omdbapi.com](https://omdbapi.com))
-- Anthropic API key (free tier at [console.anthropic.com](https://console.anthropic.com))
+- Groq API key (free at [console.groq.com](https://console.groq.com))
 
 ### 1. Clone the repository
 
@@ -57,7 +57,7 @@ Edit `.env.local` and fill in your API keys:
 
 ```env
 OMDB_API_KEY=your_omdb_key_here
-ANTHROPIC_API_KEY=your_anthropic_key_here
+GROQ_API_KEY=your_groq_key_here
 ```
 
 ### 4. Run the development server
@@ -82,7 +82,7 @@ npm test
 2. Go to [vercel.com](https://vercel.com) and import your repository
 3. In **Environment Variables**, add:
    - `OMDB_API_KEY` = your OMDB key
-   - `ANTHROPIC_API_KEY` = your Anthropic key
+   - `GROQ_API_KEY` = your Groq key
 4. Click **Deploy** — done!
 
 ---
@@ -104,13 +104,12 @@ Fetches movie details from OMDB.
   "Actors": "Keanu Reeves, Laurence Fishburne, ...",
   "Plot": "...",
   "Poster": "https://...",
-  ...
 }
 ```
 
 ### `POST /api/sentiment`
 
-Analyzes audience sentiment using Claude AI.
+Analyzes audience sentiment using Groq AI (LLaMA 3.1).
 
 **Body:** Movie data object (from `/api/movie`)
 
@@ -128,13 +127,13 @@ Analyzes audience sentiment using Claude AI.
 
 ## Assumptions
 
-1. **Reviews source**: IMDb does not provide a public API for user reviews. Rather than scraping (fragile, against ToS), I use Claude to generate a sentiment analysis based on publicly available aggregate ratings (IMDb score, Rotten Tomatoes, Metacritic) and the movie's metadata. This is more reliable and production-safe.
+1. **Reviews source**: IMDb does not provide a public API for user reviews. Rather than scraping (fragile, against ToS), I use Groq AI to generate sentiment analysis based on publicly available aggregate ratings (IMDb score, Rotten Tomatoes, Metacritic) and movie metadata. This is more reliable and legally safe.
 
 2. **IMDb ID format**: IDs must start with `tt` followed by 7-8 digits. Both 7-digit (`tt0133093`) and 8-digit (`tt12345678`) IDs are supported.
 
 3. **Poster images**: Served from `m.media-amazon.com` via Next.js Image optimization. Movies without a poster show a placeholder.
 
-4. **API rate limits**: OMDB free tier allows 1,000 requests/day. Movie data is cached for 1 hour via Next.js `revalidate`. Claude API calls are not cached (each analysis is unique).
+4. **API rate limits**: OMDB free tier allows 1,000 requests/day. Movie data is cached for 1 hour via Next.js `revalidate`. Groq API calls are not cached (each analysis is unique).
 
 ---
 
@@ -145,7 +144,7 @@ src/
 ├── app/
 │   ├── api/
 │   │   ├── movie/route.ts       # OMDB movie fetcher
-│   │   └── sentiment/route.ts   # Claude sentiment analyzer
+│   │   └── sentiment/route.ts   # Groq AI sentiment analyzer
 │   ├── globals.css
 │   ├── layout.tsx
 │   └── page.tsx                 # Main UI
@@ -156,7 +155,7 @@ src/
 │   └── LoadingSkeleton.tsx
 ├── lib/
 │   ├── omdb.ts                  # OMDB API client
-│   ├── sentiment.ts             # Claude AI client
+│   ├── sentiment.ts             # Groq AI client
 │   ├── types.ts                 # TypeScript interfaces
 │   └── utils.ts                 # Validation helpers
 └── __tests__/
