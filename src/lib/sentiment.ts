@@ -82,7 +82,7 @@ Guidelines:
   const text = data?.choices?.[0]?.message?.content;
 
   if (!text) {
-    throw new Error("Empty response from Gemini API.");
+    throw new Error("Empty response from Groq API.");
   }
 
   try {
